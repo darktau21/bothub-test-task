@@ -1,17 +1,20 @@
 import type { Response } from 'express';
 
 import { AppConfigService } from '@/config/config.service';
-import { Body, Controller, Post, Res, UseFilters } from '@nestjs/common';
+import { Cookies } from '@/shared/lib';
+import { Body, Controller, Get, Post, Res, UseFilters } from '@nestjs/common';
 
 import { AuthService } from './auth.service';
+import { COOKIE_TOKEN_NAME } from './const';
 import { PublicRoute } from './decorators';
 import { LoginRequest, RegisterRequest } from './dto/request';
 import { LoginResponse, RegisterResponse } from './dto/response';
 import { AuthExceptionFilter } from './filters';
 
 const AUTH_CONTROLLER_ROUTE = '/users';
-@UseFilters(AuthExceptionFilter)
+
 @PublicRoute()
+@UseFilters(AuthExceptionFilter)
 @Controller(AUTH_CONTROLLER_ROUTE)
 export class AuthController {
   constructor(
@@ -20,9 +23,9 @@ export class AuthController {
   ) {}
 
   private setCookieToken(token: string, res: Response) {
-    res.cookie('token', token, {
+    res.cookie(COOKIE_TOKEN_NAME, token, {
       httpOnly: true,
-      maxAge: this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME'),
+      maxAge: this.configService.get('REFRESH_TOKEN_EXPIRATION_TIME') * 1000,
       sameSite: 'strict',
       secure: this.configService.get('NODE_ENV') === 'production',
     });
@@ -32,8 +35,18 @@ export class AuthController {
   async login(
     @Body() { password, username }: LoginRequest,
     @Res({ passthrough: true }) res: Response
-  ) {
+  ): Promise<LoginResponse> {
     const tokens = await this.authService.login(username, password);
+    this.setCookieToken(tokens.refreshToken, res);
+    return new LoginResponse({ token: tokens.accessToken });
+  }
+
+  @Get('/refresh')
+  async refresh(
+    @Res({ passthrough: true }) res: Response,
+    @Cookies(COOKIE_TOKEN_NAME) refreshToken?: string
+  ): Promise<LoginResponse> {
+    const tokens = await this.authService.refresh(refreshToken);
     this.setCookieToken(tokens.refreshToken, res);
     return new LoginResponse({ token: tokens.accessToken });
   }

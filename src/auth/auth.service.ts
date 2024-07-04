@@ -4,7 +4,7 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { compare, hash } from 'bcrypt';
 
-import { PasswordCompareError } from './errors/password-compare.error';
+import { InvalidRefreshTokenError, PasswordCompareError } from './errors';
 import { TokenService } from './token.service';
 
 const SALT_ROUNDS = 2;
@@ -24,6 +24,18 @@ export class AuthService {
     }
 
     const tokens = this.tokenService.generateTokens(user.id, user.role);
+    return tokens;
+  }
+
+  async refresh(refreshToken?: string) {
+    if (!refreshToken) {
+      throw new InvalidRefreshTokenError();
+    }
+
+    const userId = await this.tokenService.verifyRefreshToken(refreshToken);
+    await this.tokenService.deleteRefreshToken(refreshToken);
+    const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
+    const tokens = this.tokenService.generateTokens(userId, user.role);
     return tokens;
   }
 

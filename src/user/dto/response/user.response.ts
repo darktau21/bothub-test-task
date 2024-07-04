@@ -1,14 +1,34 @@
-import { IsEmail, IsInt, IsString, MaxLength, MinLength } from 'class-validator';
+import type { Role, User } from '@prisma/client';
 
-export class UserResponse {
-  @IsEmail()
+import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
+
+export class UserResponse implements Omit<User, 'password'> {
+  @ApiProperty()
+  @Expose()
+  createdAt: Date;
+
+  @ApiProperty()
+  @Expose()
   email: string;
 
-  @IsInt()
+  @ApiProperty()
+  @Expose()
   id: number;
 
-  @IsString()
-  @MinLength(2, { message: 'Username must be at least 2 characters' })
-  @MaxLength(32, { message: 'Username must be less than 32 characters' })
+  @ApiProperty()
+  @Expose()
+  role: Role;
+
+  @ApiProperty()
+  @Expose()
+  updatedAt: Date;
+
+  @ApiProperty()
+  @Expose()
   username: string;
+
+  constructor(data: Partial<UserResponse>) {
+    Object.assign(this, data);
+  }
 }

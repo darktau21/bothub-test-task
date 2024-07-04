@@ -5,6 +5,7 @@ import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app/app.module';
 import { JwtAuthGuard } from './auth/guards';
+import { RequiredPermissionGuard } from './auth/guards';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,7 +20,10 @@ async function bootstrap() {
       whitelist: true,
     })
   );
-  app.useGlobalGuards(new JwtAuthGuard(app.get(Reflector)));
+  app.useGlobalGuards(
+    new JwtAuthGuard(app.get(Reflector)),
+    new RequiredPermissionGuard(app.get(Reflector))
+  );
   app.useGlobalInterceptors(
     new ClassSerializerInterceptor(app.get(Reflector), {
       excludeExtraneousValues: true,

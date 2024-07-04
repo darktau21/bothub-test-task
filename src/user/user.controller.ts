@@ -1,5 +1,9 @@
+import type { User } from '@prisma/client';
+
+import { CurrentUserPayload } from '@/auth/decorators';
 import { Controller, Get } from '@nestjs/common';
 
+import { UserResponse } from './dto/response';
 import { UserService } from './user.service';
 
 const USER_CONTROLLER_ROUTE = '/users';
@@ -8,13 +12,9 @@ const USER_CONTROLLER_ROUTE = '/users';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  // @Put()
-  // createUser(@Body() body: CreateUserSchema) {
-  //   return this.userService.createUser(body);
-  // }
-
   @Get('/me')
-  getMe() {
-    return 'Hello World';
+  async getMe(@CurrentUserPayload() userPayload: User) {
+    const currentUser = await this.userService.get(userPayload.id);
+    return new UserResponse(currentUser);
   }
 }

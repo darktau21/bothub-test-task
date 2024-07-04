@@ -8,6 +8,8 @@ import { v4 } from 'uuid';
 
 import type { IJwtTokenData } from './interfaces';
 
+import { InvalidRefreshTokenError } from './errors';
+
 @Injectable()
 export class TokenService {
   constructor(
@@ -35,5 +37,13 @@ export class TokenService {
     const accessToken = await this.generateAccessToken({ id, role });
     const refreshToken = await this.generateRefreshToken(id);
     return { accessToken, refreshToken };
+  }
+
+  async verifyRefreshToken(token: string) {
+    const userId = +(await this.redisService.get(token));
+    if (!userId) {
+      throw new InvalidRefreshTokenError('Refresh token expired');
+    }
+    return userId;
   }
 }
