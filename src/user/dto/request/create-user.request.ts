@@ -1,6 +1,6 @@
 import { IsEmail, IsString, IsStrongPassword, MaxLength, MinLength } from 'class-validator';
 
-export class CreateUserSchema {
+export class CreateUserRequest {
   @IsEmail()
   email: string;
 

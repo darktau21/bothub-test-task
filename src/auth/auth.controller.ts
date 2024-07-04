@@ -3,6 +3,7 @@ import type { Response } from 'express';
 import { AppConfigService } from '@/config/config.service';
 import { Cookies } from '@/shared/lib';
 import { Body, Controller, Get, Post, Res, UseFilters } from '@nestjs/common';
+import { ApiOkResponse } from '@nestjs/swagger';
 
 import { AuthService } from './auth.service';
 import { COOKIE_TOKEN_NAME } from './const';
@@ -31,6 +32,7 @@ export class AuthController {
     });
   }
 
+  @ApiOkResponse({ type: LoginResponse })
   @Post('/login')
   async login(
     @Body() { password, username }: LoginRequest,
@@ -41,6 +43,7 @@ export class AuthController {
     return new LoginResponse({ token: tokens.accessToken });
   }
 
+  @ApiOkResponse({ type: LoginResponse })
   @Get('/refresh')
   async refresh(
     @Res({ passthrough: true }) res: Response,
@@ -51,6 +54,7 @@ export class AuthController {
     return new LoginResponse({ token: tokens.accessToken });
   }
 
+  @ApiOkResponse({ type: RegisterResponse })
   @Post('/register')
   async register(@Body() data: RegisterRequest): Promise<RegisterResponse> {
     const user = await this.authService.register(data);

@@ -1,1 +1,2 @@
-export { CreateUserSchema } from './create-user.schema';
+export { CreateUserRequest } from './create-user.request';
+export { UpdateRoleRequest } from './update-role.request';
