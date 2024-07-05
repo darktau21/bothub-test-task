@@ -15,7 +15,6 @@ model User {
   role      Role     @default(USER)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-  books     Book[]
 
   @@map("users")
 }
@@ -23,23 +22,13 @@ model User {
 model Book {
   id              Int      @id @default(autoincrement())
   title           String
-  author          User     @relation(fields: [authorId], references: [id])
-  authorId        Int
-  publicationDate DateTime @default(now()) @map("publication_date")
+  author          String
+  publicationDate DateTime @map("publication_date")
+  createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
-  genres          Genre[]
+  genres          String
 
   @@map("books")
-}
-
-model Genre {
-  id        Int      @id @default(autoincrement())
-  name      String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  books     Book[]
-
-  @@map("genres")
 }
 
 enum Role {

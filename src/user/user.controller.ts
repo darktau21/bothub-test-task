@@ -4,9 +4,9 @@ import { CurrentUserPayload, RequiredPermission } from '@/auth/decorators';
 import { Body, Controller, Get, Param, Put, UseFilters } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 
-import { UserExceptionFilter } from './dto/filters';
 import { UpdateRoleRequest } from './dto/request';
 import { UserResponse } from './dto/response';
+import { UserExceptionFilter } from './filters';
 import { UserService } from './user.service';
 
 const USER_CONTROLLER_ROUTE = '/users';
