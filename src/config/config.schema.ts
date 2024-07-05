@@ -16,6 +16,13 @@ export const configSchema = Joi.object({
   REDIS_PASSWORD: Joi.string().required(),
   REDIS_PORT: Joi.number().port().required(),
   REFRESH_TOKEN_EXPIRATION_TIME: Joi.number().integer().required(),
+  SMTP_FROM: Joi.string().email().required(),
+  SMTP_FROM_NAME: Joi.string().required(),
+  SMTP_HOST: Joi.string().hostname().required(),
+  SMTP_PASSWORD: Joi.string().required(),
+  SMTP_PORT: Joi.number().port().required(),
+  SMTP_USER: Joi.string().required(),
+  VERIFY_LINK: Joi.string().uri().required(),
 });
 
 export type ConfigSchema = {
@@ -34,4 +41,11 @@ export type ConfigSchema = {
   REDIS_PASSWORD: string;
   REDIS_PORT: number;
   REFRESH_TOKEN_EXPIRATION_TIME: number;
+  SMTP_FROM: string;
+  SMTP_FROM_NAME: string;
+  SMTP_HOST: string;
+  SMTP_PASSWORD: string;
+  SMTP_PORT: number;
+  SMTP_USER: string;
+  VERIFY_LINK: string;
 };

@@ -12,11 +12,23 @@ import {
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
-import { InvalidRefreshTokenError, PasswordCompareError } from '../errors';
+import { InvalidRefreshTokenError, PasswordCompareError, VerificationCodeError } from '../errors';
 
-@Catch(PrismaClientKnownRequestError, PasswordCompareError, InvalidRefreshTokenError)
+@Catch(
+  PrismaClientKnownRequestError,
+  PasswordCompareError,
+  InvalidRefreshTokenError,
+  VerificationCodeError
+)
 export class AuthExceptionFilter implements ExceptionFilter {
-  catch(exception: PasswordCompareError | PrismaClientKnownRequestError, host: ArgumentsHost) {
+  catch(
+    exception:
+      | InvalidRefreshTokenError
+      | PasswordCompareError
+      | PrismaClientKnownRequestError
+      | VerificationCodeError,
+    host: ArgumentsHost
+  ) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     let error: HttpException;
@@ -34,7 +46,7 @@ export class AuthExceptionFilter implements ExceptionFilter {
       }
     }
 
-    if (exception instanceof PasswordCompareError) {
+    if (exception instanceof PasswordCompareError || exception instanceof VerificationCodeError) {
       error = new BadRequestException('Invalid credentials');
     }
 

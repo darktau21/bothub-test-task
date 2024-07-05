@@ -3,7 +3,7 @@ import type { Role, User } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class UserResponse implements Omit<User, 'password'> {
+export class UserResponse implements Omit<User, 'password' | 'verificationCode'> {
   @ApiProperty()
   @Expose()
   createdAt: Date;
@@ -27,6 +27,10 @@ export class UserResponse implements Omit<User, 'password'> {
   @ApiProperty()
   @Expose()
   username: string;
+
+  @ApiProperty()
+  @Expose()
+  verified: boolean;
 
   constructor(data: Partial<UserResponse>) {
     Object.assign(this, data);

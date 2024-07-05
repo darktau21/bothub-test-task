@@ -2,19 +2,20 @@ import type { Response } from 'express';
 
 import { AppConfigService } from '@/config/config.service';
 import { Cookies } from '@/shared/lib';
-import { Body, Controller, Get, Post, Res, UseFilters } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Res, UseFilters } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
+
+import type { IJwtTokenData } from './interfaces';
 
 import { AuthService } from './auth.service';
 import { COOKIE_TOKEN_NAME } from './const';
-import { PublicRoute } from './decorators';
+import { CurrentUserPayload, PublicRoute } from './decorators';
 import { LoginRequest, RegisterRequest } from './dto/request';
 import { LoginResponse, RegisterResponse } from './dto/response';
 import { AuthExceptionFilter } from './filters';
 
 const AUTH_CONTROLLER_ROUTE = '/users';
 
-@PublicRoute()
 @UseFilters(AuthExceptionFilter)
 @Controller(AUTH_CONTROLLER_ROUTE)
 export class AuthController {
@@ -33,6 +34,7 @@ export class AuthController {
   }
 
   @ApiOkResponse({ type: LoginResponse })
+  @PublicRoute()
   @Post('/login')
   async login(
     @Body() { password, username }: LoginRequest,
@@ -44,6 +46,7 @@ export class AuthController {
   }
 
   @ApiOkResponse({ type: LoginResponse })
+  @PublicRoute()
   @Get('/refresh')
   async refresh(
     @Res({ passthrough: true }) res: Response,
@@ -55,9 +58,20 @@ export class AuthController {
   }
 
   @ApiOkResponse({ type: RegisterResponse })
+  @PublicRoute()
   @Post('/register')
   async register(@Body() data: RegisterRequest): Promise<RegisterResponse> {
     const user = await this.authService.register(data);
+    return new RegisterResponse(user);
+  }
+
+  @ApiOkResponse({ type: RegisterResponse })
+  @Get('/verify')
+  async verify(
+    @Query('token') verificationCode: string,
+    @CurrentUserPayload() payload: IJwtTokenData
+  ): Promise<RegisterResponse> {
+    const user = await this.authService.verifyEmail(payload.id, verificationCode);
     return new RegisterResponse(user);
   }
 }

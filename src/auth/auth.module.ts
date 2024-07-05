@@ -1,4 +1,5 @@
 import { AppConfigService } from '@/config/config.service';
+import { MailModule } from '@/mail/mail.module';
 import { UserModule } from '@/user/user.module';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
@@ -12,6 +13,7 @@ import { TokenService } from './token.service';
 @Module({
   controllers: [AuthController],
   imports: [
+    MailModule,
     UserModule,
     JwtModule.registerAsync({
       inject: [AppConfigService],

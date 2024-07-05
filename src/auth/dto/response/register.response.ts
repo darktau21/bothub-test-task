@@ -31,6 +31,10 @@ export class RegisterResponse {
   @Expose()
   username: string;
 
+  @ApiProperty()
+  @Expose()
+  verified: boolean;
+
   constructor(user: Partial<RegisterResponse>) {
     Object.assign(this, user);
   }

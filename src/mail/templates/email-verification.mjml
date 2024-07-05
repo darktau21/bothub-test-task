@@ -1,0 +1,31 @@
+<mjml>
+  <mj-body>
+    <mj-section background-color="#f3f3f3">
+      <mj-column>
+        <mj-text
+          font-weight="bold"
+          align="justify"
+          font-size="24px"
+          color="#000"
+          font-family="helvetica"
+          >Email verification</mj-text
+        >
+        <mj-text align="justify" font-size="15px" color="#000" font-family="helvetica"
+          >Please click the button below to verify your email address.</mj-text
+        >
+        <mj-text align="justify" font-size="15px" color="#000" font-family="helvetica"
+          >Verification code is {{verificationCode}}</mj-text
+        >
+        <mj-button
+          align="left"
+          background-color="#8ccaca"
+          border-radius="40px"
+          font-family="helvetica"
+          font-size="12px"
+          href="{{verificationLink}}/{{verificationCode}}"
+          >VERIFY EMAIL</mj-button
+        >
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
