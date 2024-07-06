@@ -1,11 +1,8 @@
-import { ClassSerializerInterceptor, ValidationPipe, VersioningType } from '@nestjs/common';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { VersioningType } from '@nestjs/common';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
 
 import { AppModule } from './app/app.module';
-import { JwtAuthGuard } from './auth/guards';
-import { RequiredPermissionGuard } from './auth/guards';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,24 +11,6 @@ async function bootstrap() {
     prefix: 'api',
     type: VersioningType.URI,
   });
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-    })
-  );
-  app.useGlobalGuards(
-    new JwtAuthGuard(app.get(Reflector)),
-    new RequiredPermissionGuard(app.get(Reflector))
-  );
-  app.useGlobalInterceptors(
-    new ClassSerializerInterceptor(app.get(Reflector), {
-      excludeExtraneousValues: true,
-      strategy: 'exposeAll',
-    })
-  );
-
-  app.use(cookieParser());
 
   const config = new DocumentBuilder()
     .addBearerAuth({

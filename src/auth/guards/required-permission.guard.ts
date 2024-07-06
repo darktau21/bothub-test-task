@@ -1,8 +1,5 @@
-import type { Reflector } from '@nestjs/core';
-
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-
-import type { IJwtTokenData } from '../interfaces';
+import { Reflector } from '@nestjs/core';
 
 import { getRequiredPermission } from '../decorators/required-permission.decorator';
 import {
